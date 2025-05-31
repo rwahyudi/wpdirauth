@@ -488,10 +488,12 @@ else {
                  */
                 if ( $isPreBound = wpDirAuth_bindTest($connection, $preBindUser, $preBindPassword,$baseDn) === true ) {
                     if ( ($results = @ldap_search($connection, $baseDn, $filterQuery, $returnKeys)) !== false ) {
-                        if ( ($userDn = @ldap_get_dn($connection, ldap_first_entry($connection, $results))) !== false ) {
-                            if ( ($isBound = wpDirAuth_bindTest($connection, $userDn, $password,$baseDn)) === true ) {
-                                $isLoggedIn = true; // valid server, valid login, move on
-                                break; // valid server, valid login, move on
+                        if ( ldap_count_entries($connection,$results) > 0 ) {  
+                            if ( ($userDn = @ldap_get_dn($connection, ldap_first_entry($connection, $results))) !== false ) {
+                                if ( ($isBound = wpDirAuth_bindTest($connection, $userDn, $password,$baseDn)) === true ) {
+                                    $isLoggedIn = true; // valid server, valid login, move on
+                                    break; // valid server, valid login, move on
+                                }
                             }
                         }
                     }
